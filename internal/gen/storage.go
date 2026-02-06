@@ -55,6 +55,60 @@ func SaveTestCases(testCases []TestCase) error {
 	return nil
 }
 
+// LoadTestCasesWithStatus ładuje test cases z danym statusem
+func LoadTestCasesWithStatus(status string) ([]TestCase, error) {
+	testsDir, err := platform.GetTestsDir()
+	if err != nil {
+		return nil, err
+	}
+
+	// Przeczytaj wszystkie pliki .yaml
+	files, err := filepath.Glob(filepath.Join(testsDir, "*.yaml"))
+	if err != nil {
+		return nil, err
+	}
+
+	testCases := []TestCase{}
+	for _, file := range files {
+		tc, err := LoadTestCase(file)
+		if err != nil {
+			continue // Skip invalid files
+		}
+
+		// Filtruj po statusie
+		if tc.Status == status {
+			testCases = append(testCases, tc)
+		}
+	}
+
+	return testCases, nil
+}
+
+// LoadTestCase ładuje pojedynczy test case z pliku
+func LoadTestCase(filePath string) (TestCase, error) {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return TestCase{}, err
+	}
+
+	var tc TestCase
+	if err := yaml.Unmarshal(data, &tc); err != nil {
+		return TestCase{}, err
+	}
+
+	return tc, nil
+}
+
+// SaveReviewedTestCases zapisuje zmodyfikowane test cases
+func SaveReviewedTestCases(testCases []TestCase) error {
+	for _, tc := range testCases {
+		if err := SaveTestCase(tc); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // GetTestsDir zwraca ścieżkę do katalogu testów
 func GetTestsDir() (string, error) {
 	return platform.GetTestsDir()

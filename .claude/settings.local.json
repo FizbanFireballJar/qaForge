@@ -8,7 +8,12 @@
       "Bash(go get:*)",
       "Bash(go mod tidy:*)",
       "Bash(go build:*)",
-      "Bash(ANTHROPIC_API_KEY=\"\" ./qaforge gen create:*)"
+      "Bash(ANTHROPIC_API_KEY=\"\" ./qaforge gen create:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(git stash:*)"
     ]
   }
 }
