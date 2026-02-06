@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(make build:*)",
+      "Bash(./qaforge:*)",
+      "Bash(go get:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(go build:*)",
+      "Bash(ANTHROPIC_API_KEY=\"\" ./qaforge gen create:*)"
+    ]
+  }
+}
