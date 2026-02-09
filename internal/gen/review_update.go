@@ -112,8 +112,6 @@ func (m reviewModel) handleTagInput(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.tagInput += msg.String()
 		return m, nil
 	}
-
-	return m, nil
 }
 
 // moveNext przechodzi do następnego test case

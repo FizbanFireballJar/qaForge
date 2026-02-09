@@ -13,7 +13,11 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(git filter-branch:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(curl:*)",
+      "Bash(ollama list:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(ls:*)"
     ]
   }
 }

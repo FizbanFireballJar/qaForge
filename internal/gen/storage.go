@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 
 	"qaforge/internal/platform"
 
@@ -47,11 +48,21 @@ func SaveTestCase(tc TestCase) error {
 
 // SaveTestCases zapisuje listę test cases
 func SaveTestCases(testCases []TestCase) error {
+	// 1. Znajdź następny wolny ID
+	nextID := getNextTestCaseID()
+
+	// 2. Przypisz ID zaczynając od nextID
+	for i := range testCases {
+		testCases[i].ID = fmt.Sprintf("TC-%03d", nextID+i)
+	}
+
+	// 3. Zapisz wszystkie test cases
 	for _, tc := range testCases {
 		if err := SaveTestCase(tc); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -112,4 +123,59 @@ func SaveReviewedTestCases(testCases []TestCase) error {
 // GetTestsDir zwraca ścieżkę do katalogu testów
 func GetTestsDir() (string, error) {
 	return platform.GetTestsDir()
+}
+
+// LoadAllTestCases ładuje wszystkie test cases z katalogu
+func LoadAllTestCases() ([]TestCase, error) {
+	testsDir, err := platform.GetTestsDir()
+	if err != nil {
+		return nil, err
+	}
+
+	// Przeczytaj wszystkie pliki .yaml
+	files, err := filepath.Glob(filepath.Join(testsDir, "*.yaml"))
+	if err != nil {
+		return nil, err
+	}
+
+	testCases := []TestCase{}
+	for _, file := range files {
+		tc, err := LoadTestCase(file)
+		if err != nil {
+			// Skip invalid files, ale loguj warning
+			fmt.Fprintf(os.Stderr, "⚠️  Pominięto niepoprawny plik: %s\n", file)
+			continue
+		}
+		testCases = append(testCases, tc)
+	}
+
+	// Sortuj po ID
+	sort.Slice(testCases, func(i, j int) bool {
+		return testCases[i].ID < testCases[j].ID
+	})
+
+	return testCases, nil
+}
+
+// getNextTestCaseID zwraca następny wolny numer ID
+func getNextTestCaseID() int {
+	// Wczytaj wszystkie istniejące test cases
+	allTests, err := LoadAllTestCases()
+	if err != nil || len(allTests) == 0 {
+		return 1 // Jeśli brak testów, zacznij od 1
+	}
+
+	// Znajdź najwyższy numer ID
+	maxID := 0
+	for _, tc := range allTests {
+		// Wyciągnij numer z "TC-001" → 1
+		var num int
+		fmt.Sscanf(tc.ID, "TC-%d", &num)
+		if num > maxID {
+			maxID = num
+		}
+	}
+
+	// Zwróć następny wolny numer
+	return maxID + 1
 }

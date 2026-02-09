@@ -25,23 +25,3 @@ type Step struct {
 	Action   string `yaml:"action"`   // "Otwórz stronę /login"
 	Expected string `yaml:"expected"` // "Formularz się wyświetla"
 }
-
-// ClaudeRequest to struktura requestu do Claude API
-type ClaudeRequest struct {
-	Model     string          `json:"model"`
-	MaxTokens int             `json:"max_tokens"`
-	Messages  []ClaudeMessage `json:"messages"`
-}
-
-// ClaudeMessage to pojedyncza wiadomość w konwersacji
-type ClaudeMessage struct {
-	Role    string `json:"role"`    // "user" lub "assistant"
-	Content string `json:"content"` // Treść wiadomości
-}
-
-// ClaudeResponse to odpowiedź z Claude API
-type ClaudeResponse struct {
-	Content []struct {
-		Text string `json:"text"`
-	} `json:"content"`
-}
